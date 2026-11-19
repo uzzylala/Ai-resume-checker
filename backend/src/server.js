@@ -1,3 +1,5 @@
+import dns from "dns";
+import mongoose from "mongoose";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -9,6 +11,10 @@ import { notFound, errorHandler } from "./middleware/errorHandler.js";
 
 import healthRouter from "./routes/health.js";
 import authRouter from "./routes/auth.js";
+import resumesRouter from "./routes/resumes.js";
+
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
+mongoose.set("strictQuery", true);
 
 const app = express();
 
@@ -26,6 +32,7 @@ if (!env.isProd) app.use(morgan("dev"));
 
 app.use("/api/health", healthRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/resumes", resumesRouter);
 
 app.use(notFound);
 app.use(errorHandler);
