@@ -1,6 +1,6 @@
 import express from "express";
 
-import asyncHandler from "../utils/asyncHandler.js";
+import {asyncHandler} from "../utils/asyncHandler.js";
 import { requireAuth } from "../middleware/auth.js";
 
 import Resume from "../models/Resume.js";
@@ -188,13 +188,26 @@ router.get(
             const resume = resumeMap.get(v.resumeId.toString());
             events.push({
                 id: `v-${v._id}`,
+                type: "rewrite",
+                title: `${v.label} created for ${resume?.title} || "resume`,
+                subtitle: `Rewrites applied`,
+                label: `${v.label} created`,
+                at: v.createdAt,
+                resumeId: v.resumeId,
+            });
+        } 
+
+        for(const a of recentAnalyses){
+            const resume = resumeMap.get(a.resumeId.toString());
+            events.push({
+                id: `a-${a._id}`,
                 type: "analyze",
                 title: `Analysis complete on ${resume?.title || "resume"}`,
-                subtitle: `ATS score ${a.atsScore} / 100`,
+                subtitle: `ATS score ${a.atsScore} / 100 `,
                 label: `${a.atsScore}`,
                 at: a.createdAt,
-                resumeId: a.resumeId,
-            });
+                resumeId: a.resumeId
+            })
         }
 
         const activity = events

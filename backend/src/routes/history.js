@@ -1,6 +1,6 @@
 import express from "express";
 
-import asyncHandler from "../utils/asyncHandler.js";
+import {asyncHandler} from "../utils/asyncHandler.js";
 import { requireAuth } from "../middleware/auth.js";
 
 import Resume from "../models/Resume.js";

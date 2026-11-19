@@ -12,6 +12,10 @@ import { notFound, errorHandler } from "./middleware/errorHandler.js";
 import healthRouter from "./routes/health.js";
 import authRouter from "./routes/auth.js";
 import resumesRouter from "./routes/resumes.js";
+import dashboardRouter from "./routes/dashboard.js";
+import insightRouter from "./routes/insights.js";
+import versionRouter from "./routes/versions.js";
+import historyRouter from "./routes/history.js";
 
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
 mongoose.set("strictQuery", true);
@@ -33,6 +37,10 @@ if (!env.isProd) app.use(morgan("dev"));
 app.use("/api/health", healthRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/resumes", resumesRouter);
+app.use("/api/dashboard", dashboardRouter);
+app.use("/api/insights", insightRouter);
+app.use("/api/versions", versionRouter);
+app.use("/api/history", historyRouter);
 
 app.use(notFound);
 app.use(errorHandler);
