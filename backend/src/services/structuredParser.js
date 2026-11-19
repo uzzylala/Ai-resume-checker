@@ -6,107 +6,99 @@ import env from "../config/env.js";
 const ai = env.geminiApiKey ? new GoogleGenAI({ apiKey: env.geminiApiKey }) : null;
 
 const linkSchema = {
-    type: Type.OBJECT,
-    required: ["label", "url"],
-    properties: {
-        label: { type: Type.STRING },
-        url: { type: Type.STRING },
-    },
+  type: Type.OBJECT,
+  required: ["label", "url"],
+  properties: {
+    label: { type: Type.STRING },
+    url: { type: Type.STRING },
+  },
 };
 
 const responseSchema = {
-    type: Type.OBJECT,
-    required: [
-        "basics",
-        "summary",
-        "experience",
-        "education",
-        "skills",
-        "projects",
-        "certifications",
-        "languages",
-        "interests",
-    ],
-    properties: {
-        basics: {
-            type: Type.OBJECT,
-            required: ["name", "title", "location", "email", "phone", "links"],
-            properties: {
-                name: { type: Type.STRING },
-                title: { type: Type.STRING },
-                location: { type: Type.STRING },
-                email: { type: Type.STRING },
-                phone: { type: Type.STRING },
-                links: { type: Type.ARRAY, items: linkSchema },
-            },
-        },
+  type: Type.OBJECT,
+  required: [
+    "basics",
+    "summary",
+    "experience",
+    "education",
+    "skills",
+    "projects",
+    "certifications",
+    "languages",
+    "interests",
+  ],
+  properties: {
+    basics: {
+      type: Type.OBJECT,
+      required: ["name", "title", "location", "email", "phone", "links"],
+      properties: {
+        name: { type: Type.STRING },
+        title: { type: Type.STRING },
+        location: { type: Type.STRING },
+        email: { type: Type.STRING },
+        phone: { type: Type.STRING },
+        links: { type: Type.ARRAY, items: linkSchema },
+      },
     },
     summary: { type: Type.STRING },
     experience: {
-        type: Type.ARRAY,
-        items: {
-            type: Type.OBJECT,
-            required: ["company", "role", "period", "bullets"],
-            properties: {
-                company: { type: Type.STRING },
-                role: { type: Type.STRING },
-                location: { type: Type.STRING },
-                period: { type: Type.STRING },
-                bullets: { type: Type.ARRAY, items: { type: Type.STRING } },
-            },
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        required: ["company", "role", "period", "bullets"],
+        properties: {
+          company: { type: Type.STRING },
+          role: { type: Type.STRING },
+          location: { type: Type.STRING },
+          period: { type: Type.STRING },
+          bullets: { type: Type.ARRAY, items: { type: Type.STRING } },
         },
+      },
     },
     education: {
-        type: Type.ARRAY,
-        items: {
-            type: Type.OBJECT,
-            required: ["degree", "school", "period"],
-            properties: {
-                degree: { type: Type.STRING },
-                school: { type: Type.STRING },
-                location: { type: Type.STRING },
-                period: { type: Type.STRING },
-                details: { type: Type.STRING },
-            },
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        required: ["degree", "school", "period"],
+        properties: {
+          degree: { type: Type.STRING },
+          school: { type: Type.STRING },
+          location: { type: Type.STRING },
+          period: { type: Type.STRING },
+          details: { type: Type.STRING },
         },
+      },
     },
     skills: { type: Type.ARRAY, items: { type: Type.STRING } },
     projects: {
-        type: Type.ARRAY,
-        items: {
-            type: Type.OBJECT,
-            required: ["name", "description"],
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        required: ["name", "description"],
+        properties: {
+          name: { type: Type.STRING },
+          description: { type: Type.STRING },
+          tech: { type: Type.ARRAY, items: { type: Type.STRING } },
+          links: { type: Type.ARRAY, items: linkSchema },
         },
-    },
-    skills: { type: Type.ARRAY, items: { type: Type.STRING } },
-    projects: {
-        type: Type.ARRAY,
-        items: {
-            type: Type.OBJECT,
-            required: ["name", "description"],
-            properties: {
-                name: { type: Type.STRING },
-                description: { type: Type.STRING },
-                tech: { type: Type.ARRAY, items: { type: Type.STRING } },
-                links: { type: Type.ARRAY, items: linkSchema },
-            },
-        },
+      },
     },
     certifications: {
-        type: Type.ARRAY,
-        items: {
-            type: Type.OBJECT,
-            required: ["name"],
-            properties: {
-                name: { type: Type.STRING },
-                issuer: { type: Type.STRING },
-                year: { type: Type.STRING },
-            },
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        required: ["name"],
+        properties: {
+          name: { type: Type.STRING },
+          issuer: { type: Type.STRING },
+          year: { type: Type.STRING },
         },
+      },
     },
     languages: { type: Type.ARRAY, items: { type: Type.STRING } },
     interests: { type: Type.ARRAY, items: { type: Type.STRING } },
-}
+  },
+};
 
 const validator = z.object({
   basics: z.object({
@@ -137,15 +129,6 @@ const validator = z.object({
         location: z.string().default(""),
         period: z.string().default(""),
         details: z.string().default(""),
-      })
-    )
-    .default([]),
-  skills: z.array(z.string()).default([]),
-  projects: z
-    .array(
-      z.object({
-        name: z.string().default(""),
-        description: z.string().default(""),
       })
     )
     .default([]),
@@ -199,6 +182,20 @@ function buildPrompt(rawText) {
   ].join("\n");
 }
 
+// const EMPTY = {
+//   basics: { name: "", title: "", location: "", email: "", phone: "", links: [] },
+//   summary: "",
+//   experience: [],
+//   education: [],
+//   skills: [],
+//   projects: [],
+//   certifications: [],
+//   languages: [],
+//   interests: [],
+// };
+
+// ... keep everything above const EMPTY unchanged ...
+
 const EMPTY = {
   basics: { name: "", title: "", location: "", email: "", phone: "", links: [] },
   summary: "",
@@ -211,15 +208,19 @@ const EMPTY = {
   interests: [],
 };
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 async function parseResume(rawText) {
   if (!ai || !rawText?.trim()) return EMPTY;
 
   const prompt = buildPrompt(rawText);
+  const models = [env.geminiModel, "gemini-3.8-flash-lite"];
 
-  for (let attempt = 1; attempt <= 2; attempt++) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const model = models[Math.min(attempt, models.length - 1)];
     try {
       const result = await ai.models.generateContent({
-        model: env.geminiModel,
+        model,
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         config: {
           responseMimeType: "application/json",
@@ -237,6 +238,7 @@ async function parseResume(rawText) {
         console.error("Structured parse failed:", err.message);
         return EMPTY;
       }
+      await sleep(1500 * (attempt + 1));
     }
   }
   return EMPTY;
@@ -245,17 +247,35 @@ async function parseResume(rawText) {
 export { parseResume };
 
 
+// async function parseResume(rawText) {
+//   if (!ai || !rawText?.trim()) return EMPTY;
 
+//   const prompt = buildPrompt(rawText);
 
+//   for (let attempt = 1; attempt <= 2; attempt++) {
+//     try {
+//       const result = await ai.models.generateContent({
+//         model: env.geminiModel,
+//         contents: [{ role: "user", parts: [{ text: prompt }] }],
+//         config: {
+//           responseMimeType: "application/json",
+//           responseSchema,
+//           temperature: 0.1,
+//         },
+//       });
 
+//       const text = typeof result.text === "function" ? result.text() : result.text;
+//       if (!text) throw new Error("Empty response");
+//       const parsed = JSON.parse(text);
+//       return validator.parse(parsed);
+//     } catch (err) {
+//       if (attempt === 2) {
+//         console.error("Structured parse failed:", err.message);
+//         return EMPTY;
+//       }
+//     }
+//   }
+//   return EMPTY;
+// }
 
-
-
-
-
-
-
-
-
-
-
+// export { parseResume };
