@@ -8,6 +8,15 @@ export const resumesApi = {
   getVersion: (id, versionId) =>
     apiClient.get(`/resumes/${id}/versions/${versionId}`).then((r) => r.data),
 
+  upload: (file, title) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    if(title) fd.append("title", title);
+    return apiClient.post("/resumes", fd, {
+      headers: {"Content-Type": "multipart/form-data"}
+    }).then((r) => r.data);
+  },
+
   remove: (id) => apiClient.delete(`/resumes/${id}`).then((r) => r.data),
 
   analyze: (id, body = {}) =>
