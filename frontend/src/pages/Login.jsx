@@ -83,7 +83,7 @@ export default function Login() {
                 type="button"
                 className="text-xs text-[var(--accent-strong)] font-semibold hover:underline"
               >
-                Forgot?
+                Forgot Password?
               </button>
             }
           />
@@ -112,7 +112,7 @@ export default function Login() {
             to="/register"
             className="text-[var(--accent-strong)] font-semibold hover:underline"
           >
-            Create one
+            Create Account
           </Link>
         </div>
       </motion.div>
