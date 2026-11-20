@@ -17,7 +17,9 @@ import insightRouter from "./routes/insights.js";
 import versionRouter from "./routes/versions.js";
 import historyRouter from "./routes/history.js";
 
-dns.setServers(["8.8.8.8", "1.1.1.1"]);
+if (!env.isProd) {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+}
 mongoose.set("strictQuery", true);
 
 const app = express();
@@ -25,7 +27,7 @@ const app = express();
 app.set("trust proxy", 1);
 app.use(
   cors({
-    origin: true, // reflect request origin - allows everything while keeping credentials working
+    origin: true,
     credentials: true,
   })
 );
@@ -33,6 +35,16 @@ app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(cookieParser());
 if (!env.isProd) app.use(morgan("dev"));
+
+// Ensure MongoDB is connected before handling any API request in serverless
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 app.use("/api/health", healthRouter);
 app.use("/api/auth", authRouter);
@@ -45,22 +57,18 @@ app.use("/api/history", historyRouter);
 app.use(notFound);
 app.use(errorHandler);
 
-async function start() {
-  try {
-    await connectDB();
-    app.listen(env.port, () => {
-      console.log(`Server listening on http://localhost:${env.port} (${env.nodeEnv})`);
+// Only run app.listen locally; Vercel handles incoming requests via default export
+if (!env.isProd) {
+  connectDB()
+    .then(() => {
+      app.listen(env.port, () => {
+        console.log(`Server listening on http://localhost:${env.port} (${env.nodeEnv})`);
+      });
+    })
+    .catch((err) => {
+      console.error("Failed to start server:", err.message);
+      process.exit(1);
     });
-  } catch (err) {
-    console.error("Failed to start server:", err.message);
-    process.exit(1);
-  }
 }
 
-process.on("unhandledRejection", (reason) =>{
-    console.error("unhandledRejection", reason);
-})
-
-start();
-
-export {app};
+export default app;
