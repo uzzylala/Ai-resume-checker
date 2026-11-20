@@ -1,13 +1,20 @@
+import { CanvasFactory } from "pdf-parse/worker";
 import { PDFParse } from "pdf-parse";
 import ApiError from "../utils/ApiError.js";
 
 async function extractText(buffer) {
   let parser;
+
   try {
-    parser = new PDFParse({ data: buffer });
+    parser = new PDFParse({
+      data: new Uint8Array(buffer),
+      CanvasFactory,
+    });
+
     const result = await parser.getText();
 
     const text = (result.text || "").trim();
+
     if (!text || text.length < 50) {
       throw ApiError.badRequest(
         "Could not extract readable text — is this a scanned/image-only PDF?"
@@ -22,7 +29,10 @@ async function extractText(buffer) {
     };
   } catch (err) {
     if (err.isOperational) throw err;
-    throw ApiError.badRequest("Failed to parse PDF: " + err.message);
+
+    throw ApiError.badRequest(
+      "Failed to parse PDF: " + err.message
+    );
   } finally {
     try {
       await parser?.destroy?.();
