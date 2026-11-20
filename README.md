@@ -26,8 +26,6 @@ An AI-powered resume analyzer, ATS scorer, and version-controlled bullet rewrite
 ```text
 ai-resume-checker/
 ├── backend/
-│   ├── scripts/
-│   │   └── seed.js
 │   ├── src/
 │   │   ├── config/
 │   │   │   ├── db.js                 # MongoDB connection with DNS config
@@ -78,7 +76,7 @@ ai-resume-checker/
 ## Getting Started
 
 ### Prerequisites
-- **Node.js** v20 or higher
+- **Node.js**
 - **MongoDB Atlas** cluster (or local MongoDB instance)
 - **Google Gemini API Key** from [Google AI Studio](https://google.com)
 
