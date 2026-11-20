@@ -46,6 +46,12 @@ app.use(async (req, res, next) => {
   }
 });
 
+app.get("/", (_req, res) => {
+  res.status(200).json({
+    message: "API is running",
+  });
+});
+
 app.use("/api/health", healthRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/resumes", resumesRouter);
