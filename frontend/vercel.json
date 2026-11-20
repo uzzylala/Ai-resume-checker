@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://vercel.app"
+      "destination": "https://ai-resume-checker-tawny.vercel.app/api/$1"
     },
     {
       "source": "/(.*)",
